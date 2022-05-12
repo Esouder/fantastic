@@ -7,10 +7,14 @@
 
 #include "hard-storage.h"
 #include "initial-setup.h"
+#include "LED.h"
 
 //TODO: This should be in a different file
 //TODO: And should also be settable when compiling
 #define DEVICE_SERIAL 0
+
+//boo global variables :(
+LED::LED* LEDs[static_cast<int>(LED::Location::count) - 1]; //remove the '-1'!
 
 void setup() {
   Serial.begin(9600);
@@ -35,10 +39,14 @@ void setup() {
   Serial.println("Attempting to connect to WiFi");
   WiFi.begin(EEPROM_WiFiSSID.c_str(), EEPROM_WiFiPassword.c_str());
 
+  //Start LEDs
+  LEDs[static_cast<int>(LED::Location::BUILTIN)] = new LED::LED(LED::Location::BUILTIN, true);
 
 
+  LEDs[static_cast<int>(LED::Location::BUILTIN)] -> setMode(LED::Mode::BLINK_SLOW);
   while (WiFi.status() != WL_CONNECTED) {
     if (millis() - startedAttempt > 10000) {
+      LEDs[static_cast<int>(LED::Location::BUILTIN)] -> setMode(LED::Mode::BLINK_FAST);
       WiFi.disconnect(); //Timeout after 10 seconds
       Serial.println("Could not connect to WiFi. Going to AP mode.");
       InitialSetup::SetupManager* setupManager = new InitialSetup::SetupManager();
@@ -53,18 +61,27 @@ void setup() {
           setupManager->indicateFinished();
           break;
         }
+        for(LED::LED* led : LEDs){ //bad code means we have to put this uglyness in here, and then again below
+          led -> poll();
+        }
         yield();
       }
+    }
+    for(LED::LED* led : LEDs){
+      led -> poll();
     }
     yield();
   } 
 
   Serial.print("Connected to Wifi");
+  LEDs[static_cast<int>(LED::Location::BUILTIN)] -> setMode(LED::Mode::FLASH_ONCE);
 
   //Do I really have to comment that all of this needs to be not in main
 }
 
 void loop() {
-
+  for(LED::LED* led : LEDs){
+    led -> poll();
+  }
 }
 
