@@ -1,0 +1,32 @@
+<!DOCTYPE html> 
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>Fantastic Setup</title>
+    </head>
+
+    <body>
+        <h1>Fantastic Setup</h1>
+            <p>Welcome to your new Fantastic device.</p>
+            <p>A few items are required in order to set up your device:</p>
+            <h2>License</h2>
+                <p>The Fantastic project is &copy; Eric Souder and licensed as Free Software (even the parts that aren't software!) under <a href="License.txt">version 3 of the GNU General Public License</a>, except where differeing licenses may apply to specific libraries, and as such is provided without warranty. </p>
+                
+            <h2>WiFi Setup</h2>
+                <p>Information is needed in order to complete WiFi setup. Please enter the SSID and password for the network you wish to connect your Fantastic to.</p>
+                <form action="/setup-submit" method="post">
+                    <label for="SSID">SSID:</label>
+                    <input type="text" name="SSID" required>
+                    <label for="password">Password:</label>
+                    <input type="password" name="password" required>
+                    <input type="submit" value="Connect">
+                </form> 
+
+        
+    </body>
+
+    <footer>
+        <p>Fantastic &copy; 2022 Eric Souder, under a <a href=License.txt> GPLv3 license</a></p>
+    </footer>
+
+</html>
