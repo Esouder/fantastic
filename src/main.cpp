@@ -8,6 +8,7 @@
 #include "hard-storage.h"
 #include "initial-setup.h"
 #include "LED.h"
+#include "fan.h"
 
 //TODO: This should be in a different file
 //TODO: And should also be settable when compiling
@@ -15,6 +16,7 @@
 
 //boo global variables :(
 LED::LED* LEDs[static_cast<int>(LED::Location::count) - 1]; //remove the '-1'!
+Controller::FanController* fanController;
 
 void setup() {
   Serial.begin(9600);
@@ -58,6 +60,7 @@ void setup() {
           EEPROM_WiFiSSID = setupManager->getSetupPackage().ssid;
           EEPROM_WiFiPassword = setupManager->getSetupPackage().password;
           WiFi.begin(EEPROM_WiFiSSID.c_str(), EEPROM_WiFiPassword.c_str());
+          startedAttempt = millis();
           setupManager->indicateFinished();
           break;
         }
@@ -73,15 +76,18 @@ void setup() {
     yield();
   } 
 
-  Serial.print("Connected to Wifi");
+  Serial.print("Connected to Wifi, IP: ");
+  Serial.println(WiFi.localIP());
   LEDs[static_cast<int>(LED::Location::BUILTIN)] -> setMode(LED::Mode::FLASH_ONCE);
 
-  //Do I really have to comment that all of this needs to be not in main
+  Serial.println("Starting fan controller");
+  fanController = new Controller::FanController();
 }
 
 void loop() {
   for(LED::LED* led : LEDs){
     led -> poll();
   }
+  fanController -> poll();
 }
 

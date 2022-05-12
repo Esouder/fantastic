@@ -53,8 +53,8 @@ bool InitialSetup::SetupManager::poll(){
 }
 
 void InitialSetup::SetupManager::handleSetupSubmit(){
-    if(this->setupServer->hasArg("ssid") && this->setupServer->hasArg("password")){
-        this->currentSetupPackage.ssid = this->setupServer->arg("ssid");
+    if(this->setupServer->hasArg("SSID") && this->setupServer->hasArg("password")){
+        this->currentSetupPackage.ssid = this->setupServer->arg("SSID");
         this->currentSetupPackage.password = this->setupServer->arg("password");
         this->newSetupPackage = true;
     }
