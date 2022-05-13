@@ -4,12 +4,13 @@
 #include <stdint.h>
 #include <Arduino.h>
 
+#include "LED.h"
 namespace Controller {
 
     class FanController {
 
         public:
-            FanController();
+            FanController(LED::LED* led);
             ~FanController();
 
             bool poll();
@@ -32,6 +33,7 @@ namespace Controller {
             uint8_t speedPct;
             bool enabled;
             bool statusGood;
+            LED::LED* led;
 
             uint8_t pwmPin;
             uint8_t enablePin;

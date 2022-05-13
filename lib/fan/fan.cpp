@@ -7,10 +7,11 @@
 #define FAN_MIN_PWM_PCT 65
 #define FAN_MAX_PWM_PCT 100
 
-Controller::FanController::FanController() {
+Controller::FanController::FanController(LED::LED* led) {
     this -> pwmPin = FAN_PWM_PIN;
     this -> enablePin = FAN_ENABLE_PIN;
     this -> statusPin = FAN_STATUS_PIN;
+    this -> led = led;
     pinMode(pwmPin, OUTPUT);
     pinMode(enablePin, OUTPUT);
     pinMode(statusPin, INPUT);
@@ -43,14 +44,20 @@ void Controller::FanController::setSpeed(int speedPct, bool enableIfNot) {
 
 void Controller::FanController::enable() {
     this -> enabled = true;
+    led -> setMode(LED::Mode::FLASH_ONCE);
+    Serial.println("Fan enabled");
 }
 
 void Controller::FanController::disable() {
     this -> enabled = false;
+    led -> setMode(LED::Mode::FLASH_ONCE);
+    Serial.println("Fan disabled");
 }
 
 uint8_t Controller::FanController::getSpeed() {
     return this -> speedPct;
+    Serial.print("Fan speed set to ");
+    Serial.println(this -> speedPct);
 }
 
 bool Controller::FanController::getEnabled() {

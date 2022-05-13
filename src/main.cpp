@@ -9,6 +9,7 @@
 #include "initial-setup.h"
 #include "LED.h"
 #include "fan.h"
+#include "interface.h"
 
 //TODO: This should be in a different file
 //TODO: And should also be settable when compiling
@@ -17,6 +18,7 @@
 //boo global variables :(
 LED::LED* LEDs[static_cast<int>(LED::Location::count) - 1]; //remove the '-1'!
 Controller::FanController* fanController;
+Interface::Interface* interface;
 
 void setup() {
   Serial.begin(9600);
@@ -69,6 +71,7 @@ void setup() {
         }
         yield();
       }
+      delete setupManager;
     }
     for(LED::LED* led : LEDs){
       led -> poll();
@@ -81,10 +84,19 @@ void setup() {
   LEDs[static_cast<int>(LED::Location::BUILTIN)] -> setMode(LED::Mode::FLASH_ONCE);
 
   Serial.println("Starting fan controller");
-  fanController = new Controller::FanController();
+  fanController = new Controller::FanController(LEDs[static_cast<int>(LED::Location::BUILTIN)]);
+
+  interface = new Interface::Interface(fanController);
+  Serial.println("Starting interface");
+  interface -> start();
+
+  Serial.println("Setup complete. Entering loop");
 }
 
 void loop() {
+
+  //poll the polls
+  interface->poll();
   for(LED::LED* led : LEDs){
     led -> poll();
   }
